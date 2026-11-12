@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CollabSphere</title>
+
+    
+    <link rel="stylesheet" href="css/dashboard.css">
+   
+  
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html">CollabSphere</a>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="project.html">My Projects</a>
+                <a href="public-project.html">Explore Projects</a>
+                <a href="files.html">File Sharing</a>
+                <a href="notes.html">My Notes</a>
+                <a href="profile.html">My Profile</a>
+                <a href="ai.html">AI Assistant</a>
+            </nav>
+
+            <button type="button" class="btn btn-secondary" id="logoutButton">
+                Logout
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Welcome back, <span id="userName">User</span>!</p>
+                </div>
+
+                <a href="project.html" class="btn btn-primary">
+                    + Create Project
+                </a>
+            </header>
+
+            <!-- Statistics -->
+            <section class="stats-container">
+                <article class="stat-card">
+                    <h3>Total Projects</h3>
+                    <p class="stat-number" id="totalProjects">0</p>
+                </article>
+
+                <article class="stat-card">
+                    <h3>Public Projects</h3>
+                    <p class="stat-number" id="publicProjects">0</p>
+                </article>
+
+                <article class="stat-card">
+                    <h3>My Notes</h3>
+                    <p class="stat-number" id="totalNotes">0</p>
+                </article>
+
+                <article class="stat-card">
+                    <h3>Shared Files</h3>
+                    <p class="stat-number" id="totalFiles">0</p>
+                </article>
+            </section>
+
+            <!-- Recent Projects -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <div>
+                        <h2>Recent Projects</h2>
+                        <p>Quickly access your latest projects.</p>
+                    </div>
+
+                    <a href="project.html">View All</a>
+                </div>
+
+                <p id="projectMessage" role="status"></p>
+
+                <div class="projects-grid" id="recentProjects">
+                    <!-- Recent projects load here. -->
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="dashboard-section">
+                <h2>Quick Actions</h2>
+
+                <div class="quick-actions">
+                    <a href="project.html" class="quick-action-card">
+                        <h3>Create Project</h3>
+                        <p>Start a new collaboration project.</p>
+                    </a>
+
+                    <a href="notes.html" class="quick-action-card">
+                        <h3>Write a Note</h3>
+                        <p>Record ideas and important reminders.</p>
+                    </a>
+
+                    <a href="files.html" class="quick-action-card">
+                        <h3>Share Files</h3>
+                        <p>Upload and manage project documents.</p>
+                    </a>
+
+                    <a href="public-project.html" class="quick-action-card">
+                        <h3>Explore Projects</h3>
+                        <p>Discover projects available for collaboration.</p>
+                    </a>
+                </div>
+            </section>
+
+            <p id="dashboardMessage" role="status"></p>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 CollabSphere. All rights reserved.</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const API_BASE_URL = "http://localhost:5000/api";
+
+            const userName = document.getElementById("userName");
+            const totalProjects = document.getElementById("totalProjects");
+            const publicProjects = document.getElementById("publicProjects");
+            const totalNotes = document.getElementById("totalNotes");
+            const totalFiles = document.getElementById("totalFiles");
+            const recentProjects = document.getElementById("recentProjects");
+            const projectMessage = document.getElementById("projectMessage");
+            const dashboardMessage = document.getElementById("dashboardMessage");
+            const logoutButton = document.getElementById("logoutButton");
+
+            function escapeHTML(value) {
+                return String(value ?? "").replace(/[&<>"']/g, char => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                })[char]);
+            }
+
+            async function fetchAPI(path) {
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(`${API_BASE_URL}${path}`, {
+                    headers: token
+                        ? { Authorization: `Bearer ${token}` }
+                        : {}
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load dashboard data.");
+                }
+
+                return data;
+            }
+
+            function getArray(data, key) {
+                if (Array.isArray(data)) return data;
+                if (Array.isArray(data[key])) return data[key];
+                return [];
+            }
+
+            function displayRecentProjects(projects) {
+                if (!projects.length) {
+                    recentProjects.innerHTML = "";
+                    projectMessage.textContent = "No projects found. Create your first project!";
+                    return;
+                }
+
+                projectMessage.textContent = "";
+
+                recentProjects.innerHTML = projects.slice(0, 4).map(project => {
+                    const id = project._id || project.id || "";
+                    const title = escapeHTML(project.title || project.name || "Untitled Project");
+                    const description = escapeHTML(
+                        project.description || "No description available."
+                    );
+                    const category = escapeHTML(project.category || "Other");
+
+                    return `
+                        <article class="project-card">
+                            <h3>${title}</h3>
+                            <p>${description}</p>
+                            <span class="project-category">${category}</span>
+                            <p>
+                                <a href="project.html?id=${encodeURIComponent(id)}">
+                                    View Project →
+                                </a>
+                            </p>
+                        </article>
+                    `;
+                }).join("");
+            }
+
+            async function loadDashboard() {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                try {
+                    dashboardMessage.textContent = "Loading dashboard...";
+
+                    const savedUser = localStorage.getItem("user");
+
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+                            userName.textContent =
+                                user.name || user.username || user.fullName || "User";
+                        } catch {
+                            userName.textContent = "User";
+                        }
+                    }
+
+                    // These routes must match your backend.
+                    const results = await Promise.allSettled([
+                        fetchAPI("/projects"),
+                        fetchAPI("/notes"),
+                        fetchAPI("/files")
+                    ]);
+
+                    const projects = results[0].status === "fulfilled"
+                        ? getArray(results[0].value, "projects")
+                        : [];
+
+                    const notes = results[1].status === "fulfilled"
+                        ? getArray(results[1].value, "notes")
+                        : [];
+
+                    const files = results[2].status === "fulfilled"
+                        ? getArray(results[2].value, "files")
+                        : [];
+
+                    totalProjects.textContent = projects.length;
+
+                    publicProjects.textContent = projects.filter(project =>
+                        String(project.visibility || "").toLowerCase() === "public"
+                    ).length;
+
+                    totalNotes.textContent = notes.length;
+                    totalFiles.textContent = files.length;
+
+                    displayRecentProjects(projects);
+
+                    const failedRequests = results.filter(
+                        result => result.status === "rejected"
+                    );
+
+                    dashboardMessage.textContent = failedRequests.length
+                        ? "Some dashboard information could not be loaded. Check that the related API routes are available."
+                        : "";
+                } catch (error) {
+                    dashboardMessage.textContent =
+                        error.message || "Unable to load the dashboard.";
+                }
+            }
+
+            logoutButton.addEventListener("click", () => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "login.html";
+            });
+
+            loadDashboard();
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

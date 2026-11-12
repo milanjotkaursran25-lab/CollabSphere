@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sharing | CollabSphere</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/app-theme.css">
+    <link rel="stylesheet" href="css/files.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">CollabSphere</a>
+        </div>
+
+        <nav class="navbar-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="project.html">Projects</a>
+            <a href="notes.html">Notes</a>
+            <a href="files.html" class="active">Files</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="files-container">
+
+            <header class="files-header">
+                <div>
+                    <h1>File Sharing</h1>
+                    <p>Upload, organize, and access your project files.</p>
+                </div>
+            </header>
+
+            <section class="file-upload-card">
+                <h2>Upload a File</h2>
+
+                <form id="fileUploadForm">
+                    <div class="form-group">
+                        <label for="fileInput">Choose a file</label>
+                        <input type="file" id="fileInput" name="file" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileProject">Project name (optional)</label>
+                        <input
+                            type="text"
+                            id="fileProject"
+                            name="projectName"
+                            placeholder="Enter project name"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="uploadButton">
+                        Upload File
+                    </button>
+                </form>
+
+                <p id="uploadMessage" role="status" aria-live="polite"></p>
+            </section>
+
+            <section class="file-list-section">
+                <div class="files-list-header">
+                    <h2>Uploaded Files</h2>
+
+                    <input
+                        type="search"
+                        id="fileSearch"
+                        placeholder="Search files..."
+                        aria-label="Search uploaded files"
+                    >
+                </div>
+
+                <p id="fileListMessage" role="status"></p>
+
+                <div class="file-list" id="fileList">
+                    <!-- Uploaded files will appear here. -->
+                </div>
+            </section>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 CollabSphere. All rights reserved.</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/files.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const API_BASE_URL = "http://localhost:5000/api";
+
+            const uploadForm = document.getElementById("fileUploadForm");
+            const fileInput = document.getElementById("fileInput");
+            const projectInput = document.getElementById("fileProject");
+            const uploadButton = document.getElementById("uploadButton");
+            const uploadMessage = document.getElementById("uploadMessage");
+            const fileSearch = document.getElementById("fileSearch");
+            const fileList = document.getElementById("fileList");
+            const fileListMessage = document.getElementById("fileListMessage");
+
+            let files = [];
+
+            function showMessage(element, text, isError = false) {
+                element.textContent = text;
+                element.style.color = isError ? "#dc2626" : "";
+            }
+
+            function escapeHTML(value) {
+                return String(value ?? "").replace(/[&<>"']/g, char => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                })[char]);
+            }
+
+            function authHeaders() {
+                const token = localStorage.getItem("token");
+                return token ? { Authorization: `Bearer ${token}` } : {};
+            }
+
+            async function apiRequest(path, options = {}) {
+                const response = await fetch(`${API_BASE_URL}${path}`, {
+                    ...options,
+                    headers: {
+                        ...authHeaders(),
+                        ...options.headers
+                    }
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error || "Request failed.");
+                }
+
+                return data;
+            }
+
+            function renderFiles() {
+                const query = fileSearch.value.trim().toLowerCase();
+
+                const filteredFiles = files.filter(file => {
+                    const name = String(file.originalName || file.filename || file.name || "").toLowerCase();
+                    const project = String(file.projectName || "").toLowerCase();
+
+                    return name.includes(query) || project.includes(query);
+                });
+
+                if (filteredFiles.length === 0) {
+                    fileList.innerHTML = "";
+                    showMessage(
+                        fileListMessage,
+                        files.length ? "No files match your search." : "No files uploaded yet."
+                    );
+                    return;
+                }
+
+                showMessage(fileListMessage, "");
+
+                fileList.innerHTML = filteredFiles.map(file => {
+                    const id = file._id || file.id || "";
+                    const name = escapeHTML(file.originalName || file.filename || file.name || "Unnamed file");
+                    const project = escapeHTML(file.projectName || "No project assigned");
+                    const size = Number(file.size || 0);
+                    const sizeLabel = size
+                        ? `${(size / 1024).toFixed(1)} KB`
+                        : "Size unavailable";
+
+                    return `
+                        <article class="file-card">
+                            <div class="file-info">
+                                <h3>${name}</h3>
+                                <p>${project}</p>
+                                <small>${sizeLabel}</small>
+                            </div>
+
+                            <div class="file-actions">
+                                ${file.url ? `
+                                    <a
+                                        class="btn btn-primary"
+                                        href="${escapeHTML(file.url)}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >Open</a>
+                                ` : ""}
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger delete-file"
+                                    data-id="${escapeHTML(id)}"
+                                >Delete</button>
+                            </div>
+                        </article>
+                    `;
+                }).join("");
+
+                fileList.querySelectorAll(".delete-file").forEach(button => {
+                    button.addEventListener("click", async () => {
+                        const id = button.dataset.id;
+
+                        if (!id || !confirm("Are you sure you want to delete this file?")) {
+                            return;
+                        }
+
+                        try {
+                            await apiRequest(`/files/${encodeURIComponent(id)}`, {
+                                method: "DELETE"
+                            });
+
+                            files = files.filter(file =>
+                                String(file._id || file.id) !== id
+                            );
+
+                            renderFiles();
+                            showMessage(uploadMessage, "File deleted successfully.");
+                        } catch (error) {
+                            showMessage(uploadMessage, error.message, true);
+                        }
+                    });
+                });
+            }
+
+            async function loadFiles() {
+                showMessage(fileListMessage, "Loading files...");
+
+                try {
+                    const data = await apiRequest("/files");
+                    files = Array.isArray(data) ? data : data.files || [];
+                    renderFiles();
+                } catch (error) {
+                    fileList.innerHTML = "";
+                    showMessage(fileListMessage, error.message, true);
+                }
+            }
+
+            uploadForm.addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const selectedFile = fileInput.files[0];
+
+                if (!selectedFile) {
+                    showMessage(uploadMessage, "Please choose a file first.", true);
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+                formData.append("projectName", projectInput.value.trim());
+
+                uploadButton.disabled = true;
+                uploadButton.textContent = "Uploading...";
+                showMessage(uploadMessage, "");
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/files`, {
+                        method: "POST",
+                        headers: authHeaders(),
+                        body: formData
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        throw new Error(data.message || data.error || "File upload failed.");
+                    }
+
+                    uploadForm.reset();
+                    showMessage(uploadMessage, "File uploaded successfully.");
+                    await loadFiles();
+                } catch (error) {
+                    showMessage(uploadMessage, error.message, true);
+                } finally {
+                    uploadButton.disabled = false;
+                    uploadButton.textContent = "Upload File";
+                }
+            });
+
+            fileSearch.addEventListener("input", renderFiles);
+
+            loadFiles();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+/* ==========================================
+   COLLABSPHERE — NOTES PAGE
+   Wine Estate Theme
+========================================== */
+
+:root {
+    --wine: #762E43;
+    --wine-dark: #4E1D2D;
+    --wine-light: #91495D;
+    --rose: #C9959D;
+    --rose-pale: #F0DDE0;
+    --champagne: #E8D8C3;
+    --cream: #FAF5EF;
+    --card: #FFFCF8;
+    --sage: #A5B19A;
+    --text: #392B2E;
+    --muted: #87777A;
+    --border: #E9DCD5;
+    --danger: #B83245;
+    --shadow: 0 12px 35px rgba(78, 29, 45, 0.08);
+}
+
+/* Page background */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at top right, #F0DDE0, transparent 35%),
+        linear-gradient(135deg, #FAF5EF, #F7EDE8 55%, #F4E9E2);
+}
+
+/* Navigation */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 17px 6%;
+    background: rgba(255, 252, 248, 0.94);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(118, 46, 67, 0.12);
+    box-shadow: 0 4px 20px rgba(78, 29, 45, 0.05);
+}
+
+.navbar .logo a {
+    color: var(--wine);
+    text-decoration: none;
+    font-size: 1.65rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.navbar-links a {
+    padding: 10px 14px;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 11px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.navbar-links a:hover,
+.navbar-links a.active {
+    color: var(--wine);
+    background: var(--rose-pale);
+}
+
+.navbar-links a.active {
+    box-shadow: inset 0 0 0 1px rgba(118, 46, 67, 0.08);
+}
+
+
+
+.main-content {
+    width: min(1150px, 90%);
+    margin: 0 auto;
+    padding: 48px 0 70px;
+    box-sizing: border-box;
+}
+
+.notes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+
+
+.notes-header {
+    position: relative;
+    overflow: hidden;
+    padding: 38px;
+    color: #dad3ce;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(232, 216, 195, 0.3), transparent 28%),
+        linear-gradient(125deg, var(--wine-dark), var(--wine), var(--wine-light));
+    border-radius: 25px;
+    box-shadow: 0 17px 38px rgba(78, 29, 45, 0.16);
+}
+
+.notes-header::after {
+    content: "✦";
+    position: absolute;
+    top: 2px;
+    right: 35px;
+    color: rgba(255, 255, 255, 0.1);
+    font-size: 7rem;
+    pointer-events: none;
+}
+
+.notes-header h1 {
+    margin: 0 0 11px;
+    color: #e7e1dd;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    letter-spacing: -1.2px;
+}
+
+.notes-header p {
+    margin: 0;
+    color: #d8ccce;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Create note panel */
+
+.note-form-card,
+.notes-list-section {
+    padding: 32px;
+    background: rgba(255, 252, 248, 0.94);
+    border: 1px solid rgba(201, 149, 157, 0.32);
+    border-radius: 23px;
+    box-shadow: var(--shadow);
+}
+
+.note-form-card h2,
+.notes-list-section h2 {
+    margin: 0;
+    color: var(--wine-dark);
+    font-size: 1.45rem;
+    letter-spacing: -0.5px;
+}
+
+.note-form-card h2 {
+    margin-bottom: 25px;
+}
+
+/* Form layout */
+
+#noteForm {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+}
+
+.form-group label {
+    color: var(--text);
+    font-size: 0.94rem;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    color: var(--text);
+    background: #e0dbd8;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    font: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #A69798;
+}
+
+.form-group textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.75;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 4px rgba(201, 149, 157, 0.18);
+}
+
+
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 19px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    text-decoration: none;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    color: #FFF9F5;
+    background: linear-gradient(135deg, var(--wine), var(--wine-light));
+    box-shadow: 0 6px 15px rgba(118, 46, 67, 0.16);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--wine-dark), var(--wine));
+    box-shadow: 0 9px 20px rgba(118, 46, 67, 0.22);
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#addNoteButton {
+    align-self: flex-start;
+    min-width: 150px;
+}
+
+
+
+#notesMessage {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+#notesMessage:empty {
+    display: none;
+}
+
+
+
+.notes-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+#noteSearch {
+    width: min(300px, 100%);
+    box-sizing: border-box;
+    padding: 12px 15px;
+    color: var(--text);
+    background: #FFFDFC;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#noteSearch::placeholder {
+    color: #A69798;
+}
+
+#noteSearch:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 4px rgba(201, 149, 157, 0.18);
+}
+
+/* Notes grid */
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+    align-items: stretch;
+    margin-top: 20px;
+}
+
+/* Individual note card */
+
+.note-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 26px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #FFFCF8, #FBF0EC);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 6px 18px rgba(78, 29, 45, 0.05);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.note-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--wine), var(--rose), var(--champagne));
+}
+
+.note-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--rose);
+    box-shadow: 0 15px 30px rgba(78, 29, 45, 0.1);
+}
+
+.note-card h3 {
+    margin: 0 0 15px;
+    color: var(--wine-dark);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Note body */
+
+.note-content {
+    width: 100%;
+    margin: 0 0 20px;
+    color: #625257;
+    font-size: 0.94rem;
+    line-height: 1.9;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Related project */
+
+.note-project {
+    width: 100%;
+    box-sizing: border-box;
+    margin: auto 0 20px;
+    padding: 10px 12px;
+    color: #6F4A53;
+    background: var(--rose-pale);
+    border: 1px solid rgba(201, 149, 157, 0.2);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.note-project strong {
+    color: var(--wine-dark);
+}
+
+
+
+.btn-danger {
+    align-self: flex-start;
+    margin-top: auto;
+    color: var(--danger);
+    background: #FFF0F0;
+    border-color: #F1CDCF;
+}
+
+.btn-danger:hover {
+    color: #FFFFFF;
+    background: var(--danger);
+    border-color: var(--danger);
+    box-shadow: 0 7px 15px rgba(184, 50, 69, 0.16);
+}
+
+
+
+.notes-grid:empty::before {
+    content: "Your saved notes will appear here.";
+    grid-column: 1 / -1;
+    padding: 30px 20px;
+    color: var(--muted);
+    background: #FBF4F1;
+    border: 1px dashed var(--rose);
+    border-radius: 15px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+
+
+.footer {
+    padding: 25px 20px;
+    color: var(--muted);
+    background: rgba(255, 252, 248, 0.82);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.88rem;
+}
+
+.footer p {
+    margin: 0;
+}
+
+/* Accessibility */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(201, 149, 157, 0.75);
+    outline-offset: 3px;
+}
+
+
+
+@media (max-width: 850px) {
+    .main-content {
+        width: 92%;
+        padding: 35px 0 50px;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .notes-header {
+        padding: 32px;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .navbar {
+        position: relative;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 5%;
+        gap: 15px;
+    }
+
+    .navbar-links {
+        width: 100%;
+        gap: 5px;
+    }
+
+    .navbar-links a {
+        padding: 9px 10px;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        width: 92%;
+        padding: 25px 0 40px;
+    }
+
+    .notes-container {
+        gap: 20px;
+    }
+
+    .notes-header {
+        padding: 27px 22px;
+        border-radius: 19px;
+    }
+
+    .notes-header::after {
+        right: 10px;
+        font-size: 5rem;
+    }
+
+    .notes-header h1 {
+        font-size: 2rem;
+    }
+
+    .note-form-card,
+    .notes-list-section {
+        padding: 23px 18px;
+        border-radius: 19px;
+    }
+
+    .notes-list-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    #noteSearch {
+        width: 100%;
+    }
+
+    #addNoteButton {
+        width: 100%;
+    }
+
+    .note-card {
+        padding: 22px 19px;
+    }
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+ 
+/* Make Create a Note and Saved Notes headings wine-colored */
+ .note-form-card h2,
+.notes-list-section h2 {
+    color: #702d43 !important;
+}  

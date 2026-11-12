@@ -1,0 +1,314 @@
+
+:root {
+    --wine: #702d43;
+    --wine-dark: #682a42;
+    --rose: #c98291;
+    --rose-light: #f3e1e5;
+    --champagne: #d8bd8a;
+    --cream: #faf6f0;
+    --white: #ffffff;
+    --sage: #7b8b72;
+    --text: #4e3947;
+    --muted: #796371;
+    --border: #eadde0;
+    --shadow: 0 14px 40px rgba(75, 30, 48, 0.10);
+}
+
+
+/* Page background */
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 10% 10%, #f0dce2 0, transparent 32%),
+        radial-gradient(circle at 90% 90%, #efe3cc 0, transparent 30%),
+        var(--cream);
+}
+
+/* Main wrapper */
+.profile-wrap {
+    width: min(850px, calc(100% - 32px));
+    margin: 45px auto;
+    padding: 0;
+    animation: profileAppear 0.65s ease both;
+}
+
+/* Back link */
+.profile-wrap > p {
+    margin: 0 0 20px;
+}
+
+.profile-wrap > p a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--wine);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.profile-wrap > p a:hover {
+    color: var(--rose);
+    transform: translateX(-4px);
+}
+
+/* Main profile card */
+.profile-card {
+    position: relative;
+    overflow: hidden;
+    padding: 42px;
+    border: 1px solid rgba(216, 189, 138, 0.45);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow);
+}
+
+/* Decorative top strip */
+.profile-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 7px;
+    background: linear-gradient(
+        90deg,
+        var(--wine-dark),
+        var(--wine),
+        var(--rose),
+        var(--champagne)
+    );
+}
+
+/* Avatar */
+.profile-avatar {
+    width: 94px;
+    height: 94px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 22px;
+    border: 4px solid var(--white);
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--wine), var(--rose));
+    box-shadow: 0 0 0 2px var(--champagne),
+                0 10px 25px rgba(112, 45, 67, 0.2);
+    color: var(--white);
+    font-size: 35px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Headings and description */
+.profile-card h1 {
+    margin: 0 0 10px;
+    color: white;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(30px, 5vw, 40px);
+    letter-spacing: -0.8px;
+}
+
+.profile-card > p:not(.profile-message) {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* Loading / status message */
+.profile-message {
+    margin: 22px 0 0;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--cream);
+    color: var(--wine);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Profile information grid */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+/* Individual information fields */
+.profile-field {
+    position: relative;
+    min-width: 0;
+    padding: 21px;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: linear-gradient(145deg, #fff, #fcf7f7);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.profile-field:hover {
+    transform: translateY(-4px);
+    border-color: var(--wine-dark);
+    box-shadow: 0 10px 24px rgba(112, 45, 67, 0.08);
+}
+
+.profile-field small {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.profile-field strong {
+    display: block;
+    color: var(--wine-dark);
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Action buttons */
+.profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.profile-actions a,
+.profile-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 20px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    text-align: center;
+    text-decoration: none;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Dashboard button */
+.profile-actions a {
+    background: rgb(116, 85, 85);
+    color: var(--white);
+    box-shadow: 0 5px 14px rgba(112, 45, 67, 0.16);
+}
+
+.profile-actions a:hover {
+    transform: translateY(-2px);
+    background: var(--wine-dark);
+    box-shadow: 0 8px 18px rgba(112, 45, 67, 0.22);
+}
+
+/* Refresh button */
+#refreshProfile {
+    border-color: #dfc5cc;
+    background: var(--rose-light);
+    color: var(--wine-dark);
+}
+
+#refreshProfile:hover {
+    transform: translateY(-2px);
+    background: #ebcbd3;
+}
+
+/* Logout button */
+#logoutButton {
+    border-color: #d8e0d3;
+    background: #edf1e9;
+    color: #4c6345;
+}
+
+#logoutButton:hover {
+    transform: translateY(-2px);
+    background: #dce6d5;
+}
+
+/* Keyboard accessibility */
+.profile-wrap a:focus-visible,
+.profile-actions button:focus-visible {
+    outline: 3px solid var(--champagne);
+    outline-offset: 4px;
+}
+
+/* Loading animation */
+@keyframes profileAppear {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tablet and mobile */
+@media (max-width: 600px) {
+    .profile-wrap {
+        width: calc(100% - 24px);
+        margin: 25px auto;
+    }
+
+    .profile-card {
+        padding: 28px 20px;
+        border-radius: 19px;
+    }
+
+    .profile-avatar {
+        width: 78px;
+        height: 78px;
+        font-size: 29px;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .profile-field {
+        padding: 17px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions a,
+    .profile-actions button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+

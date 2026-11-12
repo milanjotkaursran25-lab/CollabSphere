@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | CollabSphere</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/project.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/app-theme.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <h2 class="logo">CollabSphere</h2>
+
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="project.html" class="active">Projects</a>
+        <a href="public-project.html">Public Projects</a>
+        <a href="files.html">Files</a>
+        <a href="notes.html">Notes</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="profile.html">Profile</a>
+      </nav>
+
+      <button id="logoutBtn" type="button">Logout</button>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Projects</h1>
+          <p>Create, organize, and manage your projects.</p>
+        </div>
+      </header>
+
+      <section class="project-form-section">
+        <h2>Create a Project</h2>
+
+        <form id="projectForm">
+          <div class="form-group">
+            <label for="projectName">Project Name</label>
+            <input
+              type="text"
+              id="projectName"
+              name="name"
+              placeholder="Enter project name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="projectDescription">Description</label>
+            <textarea
+              id="projectDescription"
+              name="description"
+              placeholder="Describe your project"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="projectStatus">Status</label>
+            <select id="projectStatus" name="status">
+              <option value="pending">Not Started</option>
+              <option value="active">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <button type="submit">Create Project</button>
+          <p id="formMessage" role="status"></p>
+        </form>
+      </section>
+
+      <section class="projects-section">
+        <div class="section-heading">
+          <h2>Your Projects</h2>
+          <button type="button" id="refreshBtn">Refresh</button>
+        </div>
+
+        <div id="projectsList" class="projects-grid">
+          <p>Loading projects...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/projects.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CollabSphere | Developer Collaboration Platform</title>
+
+    <meta name="description" content="CollabSphere helps developers collaborate on projects, manage notes, share code, and generate documentation with AI.">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="container nav-content">
+
+            <a href="index.html" class="logo">
+                <span class="logo-icon">C</span>
+                CollabSphere
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#about">About</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-outline">Log In</a>
+                <a href="register.html" class="btn btn-primary">Get Started</a>
+            </div>
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="navLinks"
+                type="button"
+            >
+                ☰
+            </button>
+
+        </div>
+    </header>
+
+
+    <!-- Hero Section -->
+    <main>
+
+        <section class="hero">
+            <div class="container hero-content">
+
+                <div class="hero-text">
+
+                    <div class="hero-badge">
+                        <span class="status-dot"></span>
+                        Collaboration meets AI
+                    </div>
+
+                    <h1>
+                        Build Better Projects.
+                        <span>Collaborate Smarter.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Your team's workspace for projects, code, documentation,
+                        and intelligent AI assistance. Everything developers need
+                        to build amazing things together.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="register.html" class="btn btn-primary btn-large">
+                            Start Collaborating →
+                        </a>
+
+                        <a href="#features" class="btn btn-outline btn-large">
+                            Explore Features
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div>
+                            <strong>Projects</strong>
+                            <span>Organize your work</span>
+                        </div>
+
+                        <div>
+                            <strong>Teamwork</strong>
+                            <span>Build together</span>
+                        </div>
+
+                        <div>
+                            <strong>AI Powered</strong>
+                            <span>Work more efficiently</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- Dashboard Preview -->
+                <div class="hero-preview">
+
+                    <div class="preview-window">
+
+                        <div class="preview-header">
+                            <div class="window-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+
+                            <span>CollabSphere Workspace</span>
+                        </div>
+
+                        <div class="preview-body">
+
+                            <aside class="preview-sidebar">
+                                <div class="preview-brand">Workspace</div>
+
+                                <div class="sidebar-item active">▦ Dashboard</div>
+                                <div class="sidebar-item">▣ My Projects</div>
+                                <div class="sidebar-item">▤ Documents</div>
+                                <div class="sidebar-item">⌘ Code Files</div>
+                                <div class="sidebar-item">✦ AI Assistant</div>
+                            </aside>
+
+                            <div class="preview-main">
+
+                                <div class="preview-greeting">
+                                    <span>Workspace Overview</span>
+                                    <span class="avatar">D</span>
+                                </div>
+
+                                <h3>Your projects</h3>
+
+                                <div class="project-preview-card">
+                                    <div class="project-symbol purple">CS</div>
+
+                                    <div>
+                                        <strong>CollabSphere</strong>
+                                        <p>Developer collaboration</p>
+
+                                        <div class="progress-track">
+                                            <div class="progress-fill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="project-preview-card">
+                                    <div class="project-symbol blue">AI</div>
+
+                                    <div>
+                                        <strong>AI Workspace</strong>
+                                        <p>Smart documentation</p>
+
+                                        <div class="progress-track">
+                                            <div class="progress-fill second"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-preview">
+                                    <span>✦ Gemini AI Assistant</span>
+                                    <p>
+                                        Explain code, improve notes, and

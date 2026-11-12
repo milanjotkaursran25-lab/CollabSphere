@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Projects | CollabSphere</title>
+
+    
+    <link rel="stylesheet" href="css/public-project.css">
+    
+ 
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">CollabSphere</a>
+        </div>
+
+        <nav class="navbar-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="public-project.html">Explore Projects</a>
+            <a href="project.html" class="active">My Projects</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="projects-container">
+
+            <div class="projects-header">
+                <div>
+                    <h1>My Projects</h1>
+                    <p>Create, organize, and manage your projects.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="showProjectForm"
+                >
+                    + Create Project
+                </button>
+            </div>
+
+            <section class="project-form-container" id="projectFormContainer" hidden>
+                <h2>Create a New Project</h2>
+
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectTitle">Project Title</label>
+                        <input
+                            type="text"
+                            id="projectTitle"
+                            name="title"
+                            placeholder="Enter project title"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea
+                            id="projectDescription"
+                            name="description"
+                            rows="4"
+                            placeholder="Describe your project"
+                            maxlength="2000"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectCategory">Category</label>
+                        <select id="projectCategory" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="web development">Web Development</option>
+                            <option value="design">Design</option>
+                            <option value="artificial intelligence">Artificial Intelligence</option>
+                            <option value="mobile app">Mobile App</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectVisibility">Visibility</label>
+                        <select id="projectVisibility" name="visibility">
+                            <option value="private">Private</option>
+                            <option value="public">Public</option>
+                        </select>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            Create Project
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            id="cancelProjectForm"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <p id="projectMessage" role="status"></p>
+
+            <div class="projects-grid" id="projectsList">
+                <!-- Projects will be loaded here using JavaScript. -->
+            </div>
+
+            <section id="projectDetails" hidden>
+                <button type="button" class="btn btn-secondary" id="backToProjects">
+                    &larr; Back to Projects
+                </button>
+
+                <div id="projectDetailsContent"></div>
+            </section>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 CollabSphere. All rights reserved.</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/projects.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const API_BASE_URL = "http://localhost:5000/api";
+
+            const projectForm = document.getElementById("projectForm");
+            const formContainer = document.getElementById("projectFormContainer");
+            const showFormButton = document.getElementById("showProjectForm");
+            const cancelFormButton = document.getElementById("cancelProjectForm");
+            const projectsList = document.getElementById("projectsList");
+            const message = document.getElementById("projectMessage");
+            const projectDetails = document.getElementById("projectDetails");
+            const projectDetailsContent = document.getElementById("projectDetailsContent");
+            const backButton = document.getElementById("backToProjects");
+
+            let projects = [];
+
+            function escapeHTML(value) {
+                return String(value ?? "").replace(/[&<>"']/g, char => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                })[char]);
+            }
+
+            function getAuthHeaders() {
+                const token = localStorage.getItem("token");
+
+                return token
+                    ? { "Authorization": `Bearer ${token}` }
+                    : {};
+            }
+
+            async function apiRequest(path, options = {}) {
+                const headers = {
+                    ...getAuthHeaders(),
+                    ...(options.body ? { "Content-Type": "application/json" } : {}),
+                    ...options.headers
+                };
+
+                const response = await fetch(`${API_BASE_URL}${path}`, {
+                    ...options,
+                    headers
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error || "Request failed.");
+                }
+
+                return data;
+            }
+
+            function showMessage(text, isError = false) {
+                message.textContent = text;
+                message.style.color = isError ? "#dc2626" : "";
+            }
+
+            function renderProjects() {
+                if (!projects.length) {
+                    projectsList.innerHTML = "";
+                    showMessage("You haven't created any projects yet.");
+                    return;
+                }
+
+                showMessage("");
+
+                projectsList.innerHTML = projects.map(project => {
+                    const id = project._id || project.id;
+                    const title = escapeHTML(project.title || project.name || "Untitled Project");
+                    const description = escapeHTML(project.description || "No description available.");
+                    const category = escapeHTML(project.category || "Other");
+                    const visibility = escapeHTML(project.visibility || "private");
+
+                    return `
+                        <article class="project-card">
+                            <span class="project-category">${category}</span>
+                            <h2>${title}</h2>
+                            <p>${description}</p>
+                            <p><strong>Visibility:</strong> ${visibility}</p>
+                            <div class="button-group">
+                                <button
+                                    type="button"
+                                    class="btn btn-primary view-project"
+                                    data-id="${escapeHTML(id)}"
+                                >
+                                    View Details
+                                </button>
+                            </div>
+                        </article>
+                    `;
+                }).join("");
+
+                projectsList.querySelectorAll(".view-project").forEach(button => {
+                    button.addEventListener("click", () => {
+                        const project = projects.find(item =>
+                            String(item._id || item.id) === button.dataset.id
+                        );
+
+                        if (project) {
+                            showProjectDetails(project);
+                        }
+                    });
+                });
+            }
+
+            async function loadProjects() {
+                showMessage("Loading projects...");
+
+                try {
+                    // Assumes the backend returns the current user's projects here.
+                    const data = await apiRequest("/projects");
+                    projects = Array.isArray(data) ? data : data.projects || [];
+                    renderProjects();
+                } catch (error) {
+                    projectsList.innerHTML = "";
+                    showMessage(
+                        `${error.message} Check your login status and the projects API endpoint.`,
+                        true
+                    );
+                }
+            }
+
+            function showProjectDetails(project) {
+                projectsList.hidden = true;
+                formContainer.hidden = true;
+                showFormButton.hidden = true;
+                projectDetails.hidden = false;
+                message.textContent = "";
+
+                projectDetailsContent.innerHTML = `
+                    <article class="project-card">
+                        <h1>${escapeHTML(project.title || project.name || "Untitled Project")}</h1>
+                        <p>${escapeHTML(project.description || "No description available.")}</p>
+                        <p><strong>Category:</strong> ${escapeHTML(project.category || "Other")}</p>
+                        <p><strong>Visibility:</strong> ${escapeHTML(project.visibility || "private")}</p>
+                        <p><strong>Status:</strong> ${escapeHTML(project.status || "Active")}</p>
+                    </article>
+                `;
+            }
+
+            showFormButton.addEventListener("click", () => {
+                formContainer.hidden = false;
+                projectDetails.hidden = true;
+                projectsList.hidden = false;
+                showFormButton.hidden = true;
+                showMessage("");
+            });
+
+            cancelFormButton.addEventListener("click", () => {
+                projectForm.reset();
+                formContainer.hidden = true;
+                showFormButton.hidden = false;
+                showMessage("");
+            });
+
+            backButton.addEventListener("click", () => {
+                projectDetails.hidden = true;
+                projectsList.hidden = false;
+                showFormButton.hidden = false;
+            });
+
+            projectForm.addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const submitButton = projectForm.querySelector('[type="submit"]');
+                submitButton.disabled = true;
+
+                const projectData = {
+                    title: document.getElementById("projectTitle").value.trim(),
+                    description: document.getElementById("projectDescription").value.trim(),
+                    category: document.getElementById("projectCategory").value,
+                    visibility: document.getElementById("projectVisibility").value
+                };
+
+                if (!projectData.title || !projectData.description || !projectData.category) {
+                    showMessage("Please complete all required fields.", true);
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                try {
+                    const data = await apiRequest("/projects", {
+                        method: "POST",
+                        body: JSON.stringify(projectData)
+                    });
+
+                    const createdProject = data.project || data;
+
+                    if (createdProject && (createdProject._id || createdProject.id)) {
+                        projects.unshift(createdProject);
+                        renderProjects();
+                    } else {
+                        await loadProjects();
+                    }
+
+                    projectForm.reset();
+                    formContainer.hidden = true;
+                    showFormButton.hidden = false;
+                    showMessage("Project created successfully.");
+                } catch (error) {
+                    showMessage(error.message || "Could not create project.", true);
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            const requestedProjectId = new URLSearchParams(window.location.search).get("id");
+
+            loadProjects().then(() => {
+                if (requestedProjectId) {
+                    const project = projects.find(item =>
+                        String(item._id || item.id) === requestedProjectId
+                    );
+
+                    if (project) {
+                        showProjectDetails(project);
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+```
